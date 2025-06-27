@@ -82,27 +82,30 @@ const Home = () => {
 
     const filteredProducts = Products.filter((product) => {
         const isDefault = !ProductSearch && inputValue === 0;
-      
         if (isDefault) return true;
       
         const matchesName = ProductSearch
-          ? product?.title?.toLowerCase().includes(ProductSearch?.toLowerCase())
+          ? product?.title?.toLowerCase().includes(ProductSearch.toLowerCase())
           : true;
       
-        const matchesPrice = product?.price <= inputValue;
+        const matchesPrice = inputValue > 0
+          ? product?.price <= inputValue
+          : true;
       
         return matchesName && matchesPrice;
     });
+      
       
 
     const offset = currentPage * itemsPerPage;  
     const currentItems =  filteredProducts?.length < 10 ? filteredProducts : 
     filteredProducts?.slice(offset, offset + itemsPerPage);
-   console.log(dataStatus,'dataStatusdataStatus')
+
     return(
     <>
         <section className="w-full max-w-[98%] mx-auto mt-4 mb-8">
             <div className="flex gap-0">
+                { !isMobile && (
                 <div className="w-[20%] p-4 rounded-md shadow-sm border border-borderClr ">
                     
                     <h3 className="text-lg font-semibold mb-4 ">Filters</h3>
@@ -153,7 +156,8 @@ const Home = () => {
                         </svg>
                     </div>
                 </div>
-                <div className="w-[80%] p-4 ">
+                )}
+                <div className={` w-[80%] ${isMobile && 'w-[100%]'} p-4 `}>
                     {!dataStatus ? 
                     ( 
                         <>
@@ -190,40 +194,58 @@ const Home = () => {
                          <div className="mt-10 border border-borderClr p-4">
                             <h2 className="font-extrabold text-2xl font-gilroy">{AllProducts}</h2>
                             <div className="flex space-x-2 mt-4 mb-2">
-                                <div>
-                                    <div>  
+                                { isMobile && (
+                                    <div className="w-full p-4 rounded-md shadow-sm border border-borderClr ">
+                                        
+                                        <h3 className="text-lg font-semibold mb-4 ">Filters</h3>
+                                        <hr class="border-t border-gray-300 my-4" />
                                         <Select
                                             defaultValue=""
-                                            onChange={(e) => searchCat(e)}
+                                            onChange={searchCat}
                                             value={catSearch}
-                                            style={{ width: '200px',
-                                                height: '40px',
-                                            }}
+                                            style={{ width: '100%', marginBottom: '28px', marginTop:'30px'}}
                                             options={[
-                                                { value: "", label: "All Categories" },
-                                                ...options
+                                            { value: "", label: "All Categories" },
+                                            ...options
                                             ]}
-                                            className="outline-none"
                                         />
+                                        <label className="block mb-1 font-medium">Price range</label>
+                                        <div>   
+                                            <InputNumber
+                                                min={0}
+                                                max={600}
+                                                style={{ width: '100%',}}
+                                                value={inputValue}
+                                                onChange={onChangePrice}
+                                            />
+                                        </div>
+                                        <div>   
+                                            <AntSlider
+                                                min={0}
+                                                max={600}
+                                                onChange={onChangePrice}
+                                                value={typeof inputValue === 'number' ? inputValue : 0}
+                                            />
+                                        </div>
+                                        <div
+                                            class={`flex w-full mt-6  px-2 py-2 rounded outline outline-transparent border border-gray-200`}
+                                        >
+                                            <input 
+                                                type='text' 
+                                                placeholder='Search Products...'
+                                                onChange={(e) => searchProduct(e)}
+                                                value={ProductSearch}
+                                                class='w-full text-sm bg-transparent rounded outline-none pr-2 !border-none ' 
+                                            />
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192.904 192.904" width="16px"
+                                                class="cursor-pointer fill-gray-400">
+                                                <path
+                                                    d="m190.707 180.101-47.078-47.077c11.702-14.072 18.752-32.142 18.752-51.831C162.381 36.423 125.959 0 81.191 0 36.422 0 0 36.423 0 81.193c0 44.767 36.422 81.187 81.191 81.187 19.688 0 37.759-7.049 51.831-18.751l47.079 47.078a7.474 7.474 0 0 0 5.303 2.197 7.498 7.498 0 0 0 5.303-12.803zM15 81.193C15 44.694 44.693 15 81.191 15c36.497 0 66.189 29.694 66.189 66.193 0 36.496-29.692 66.187-66.189 66.187C44.693 147.38 15 117.689 15 81.193z">
+                                                </path>
+                                            </svg>
+                                        </div>
                                     </div>
-                                </div>
-                                <div
-                                    class={`flex xl:w-96 max-lg:w-full lg:ml-10 px-6 py-2 rounded outline outline-transparent border border-gray-200`}
-                                >
-                                    <input 
-                                        type='text' 
-                                        placeholder='Search Products...'
-                                        onChange={(e) => searchProduct(e)}
-                                        value={ProductSearch}
-                                        class='w-full text-sm bg-transparent rounded outline-none pr-2 !border-none ' 
-                                    />
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192.904 192.904" width="16px"
-                                        class="cursor-pointer fill-gray-400">
-                                        <path
-                                            d="m190.707 180.101-47.078-47.077c11.702-14.072 18.752-32.142 18.752-51.831C162.381 36.423 125.959 0 81.191 0 36.422 0 0 36.423 0 81.193c0 44.767 36.422 81.187 81.191 81.187 19.688 0 37.759-7.049 51.831-18.751l47.079 47.078a7.474 7.474 0 0 0 5.303 2.197 7.498 7.498 0 0 0 5.303-12.803zM15 81.193C15 44.694 44.693 15 81.191 15c36.497 0 66.189 29.694 66.189 66.193 0 36.496-29.692 66.187-66.189 66.187C44.693 147.38 15 117.689 15 81.193z">
-                                        </path>
-                                    </svg>
-                                </div>
+                                )}
                             </div>
                             <h2 className="font-normal text-[20px] text-textHcolor mt-4">{catSearch && catSearch.toUpperCase() || 'ALL'}</h2>
                             <div className={`grid ${isMobile ? 'grid-cols-2' : 'grid-cols-4' }  ${isMobile ? 'grid-rows-2' : 'grid-rows-1' }   gap-4`}>

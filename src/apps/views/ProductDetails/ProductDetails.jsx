@@ -44,7 +44,6 @@ const ProductDetails = ()=> {
     }, [currentId,catSearch,dispatch]);
 
     const elem = SingleProduct?.details; 
-    const tags = elem?.category;
     const rate = elem?.rating?.rate;
     const title = elem?.title;
     const price = elem?.price;    
