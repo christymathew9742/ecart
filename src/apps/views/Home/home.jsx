@@ -157,7 +157,7 @@ const Home = () => {
                     </div>
                 </div>
                 )}
-                <div className={` w-[80%] ${isMobile && 'w-[100%]'} p-4 `}>
+                <div className={` w-[80%] ${isMobile && '!w-[100%]'} p-4 `}>
                     {!dataStatus ? 
                     ( 
                         <>
